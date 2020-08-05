@@ -1,34 +1,21 @@
 package com.coderslab;
 
 
-public class MyLinkedList<E> extends MyAbstractList<E> {
+import java.util.Arrays;
 
-    MyArrayList<Node> list;
+public class MyLinkedList<E> implements ImyList<E> {
 
-    public class Node {
+    Node head;
+    Node tail;
 
 
+    protected class Node {
         Object data;
-        int next;
+        Node next;
 
-        public Node(Object o) {
-            if(list.size() ==0){
-                data = o;
-                this.next =1;
-            }
-            else{
-                data = o;
-                next = list.size()+1;
-            }
-        }
+        protected Node(Object data) {
+            this.data = data;
 
-        public Node(int index, Object o){
-
-                data= o;
-                next = index +1;
-                for (int i= index; i<list.size();i++){
-                    list.get(i).setNext(list.get(i).getNext()+1);
-                }
         }
 
         public Object getData() {
@@ -39,91 +26,232 @@ public class MyLinkedList<E> extends MyAbstractList<E> {
             this.data = data;
         }
 
-        public int getNext() {
+        public Node getNext() {
             return next;
         }
 
-        public void setNext(int next) {
+        public void setNext(Node next) {
             this.next = next;
         }
+    }
+
+    private boolean addHead(Object data) {
+        Node node = new Node(data);
+        node.setNext(head.getNext());
+        head = node;
+
+        return true;
 
     }
 
-    public MyLinkedList() {
-        list = new MyArrayList<>();
+    private boolean addNode(Object data) {
+
+        Node node = new Node(data);
+        if (head == null) {
+            head = node;
+            tail = node;
+        }
+        tail.setNext(node);
+        tail = node;
+
+
+        return true;
     }
+
 
     @Override
     public boolean add(Object o) {
-        Node node = new Node(o);
-        list.add(node);
-
-     /*   list =sortedList(list);*/
-
+        addNode(o);
         return true;
     }
 
     @Override
     public boolean add(int index, Object o) {
-
-        Node node = new Node(index, o);
-        list.add(node);
-        list =sortedList(list);
+        if (index == 0) {
+            addHead(o);
+        } else {
+            Node oldNode = findNode(index);
+            Node newNode = new Node(o);
+            newNode.setNext(oldNode);
+            findNode(index - 1).setNext(newNode);
+        }
         return true;
     }
 
     @Override
     public boolean remove(Object o) {
-        int position =list.find(o);
-        list.remove(position);
+                remove(find(o));
+
         return true;
     }
 
     @Override
-    public boolean remove(int index) {
-        list.remove(index);
-        System.out.println("list.size() w metodzie remove w klasie MyLinkedList: "+list.size());
-        return true;
-    }
+    public boolean remove(int i) {
+        if (i < 0) {
+            return false;
+        } else {
 
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i =0; i<list.size();i++){
+            if (i == 0) {
+                head.setNext(null);
+                head = findNode(1);
+                return true;
+            } else if (i == size()) {
+                tail = findNode(i - 1);
+                return true;
+            } else {
+                Node nodeToRemove = findNode(i);
+                Node previousNode = findNode(i - 1);
+                previousNode.setNext(nodeToRemove.getNext());
+                nodeToRemove.setNext(null); //dobra jak zniszczyć obiekt ?
 
-            System.out.println(list.size());
-            stringBuilder.append(list.get(i).data).append(",");
+            }
         }
-        return stringBuilder.toString();
-    }
 
+
+        return true;
+    }
 
     @Override
     public E get(int position) {
-        return (E)list.get(position).data;
+
+        return (E) findNode(position).getData();
+
+    }
+
+    @Override
+    public void set(int index, Object o) {
+        Node newNode = new Node(0);
+        add(index,o);
+
     }
 
     @Override
     public int size() {
-        return list.size();
-    }
+        int counter = 1;
+        Node tempNode = head;
 
-    private MyArrayList<Node> sortedList(MyArrayList<Node> list){
-        MyArrayList<Node> newArrayList = new MyArrayList<>();
-
-        for (int i =0; i< list.size(); i++){
-            for (int j =0;j<list.size(); j++){
-                if(list.get(j).getNext()-1 == i){
-                    newArrayList.add(list.get(j));
-                }
-            }
+        if (head == null) {
+            return 0;
+        } else if (head.equals(tail)) {
+            return 1;
         }
-        return newArrayList;
-    }
-/*
-private void decreaseIndexAfterRemove(int index){
-    for (int i = index; i < ; i++) {
 
-    }*/
+        while (tempNode != tail) {
+
+            tempNode = tempNode.getNext();
+            counter++;
+        }
+
+        return counter;
+    }
+
+    @Override
+    public void sort() {
+
+    }
+
+    @Override
+    public int[] findAll(Object o) {
+        int [] arr = new int[0];
+        int counter =0;
+        Node tempNode = head;
+        while (counter < size()) {
+            if (tempNode.getData()== o) {
+                arr = Arrays.copyOf(arr,arr.length+1);
+                arr[arr.length-1] =counter;
+
+            } else if (tail == tempNode) {
+                return arr;
+            }
+            tempNode = tempNode.getNext();
+            counter++;
+        }
+        return arr;
+    }
+
+    @Override
+    public int find(Object o) {
+
+        int counter = 0;
+        Node tempNode;
+        tempNode = head;
+        while (counter < size()) {
+            if (tempNode.getData().equals(o)) {
+                return counter;
+            } else if (tail == tempNode) {
+                return -1;
+            }
+            tempNode = tempNode.getNext();
+            counter++;
+        }
+
+        return 0;
+}
+
+
+    @Override
+    public boolean isEmpty() {
+        if (head !=null){
+            return false;
+        }else {
+            return true;
+        }
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        if(find(0)>-1){
+            return true;
+        }else {
+            return false;
+        }
+
+    }
+
+
+    @Override
+    public void clear() {
+    head = null;   //pytanie  co się dzieje z pozostałymi obiektami? Są niszczone?
+    tail = null;
+
+    }
+
+
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getClass().getSimpleName()).append(": [");
+        for (int i = 0; i < size(); i++) {
+            if (i ==0){
+                stringBuilder.append(get(i));
+            }else {
+                stringBuilder.append(",").append(get(i));
+            }
+
+        }
+        stringBuilder.append("]");
+        return stringBuilder.toString();
+    }
+
+    private Node findNode(int index) {
+        if (index < 0) {
+            return null;
+        } else {
+            int counter = 0;
+            Node tempNode;
+            tempNode = head;
+            while (counter < index) {
+                if (tail == tempNode) {
+                    return null;
+                }
+                tempNode = tempNode.getNext();
+                counter++;
+            }
+            return tempNode;
+        }
+    }
+
+
 }
 
