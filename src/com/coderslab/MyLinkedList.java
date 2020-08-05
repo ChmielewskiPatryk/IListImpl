@@ -5,13 +5,13 @@ import java.util.Arrays;
 
 public class MyLinkedList<E> implements ImyList<E> {
 
-    Node head;
-    Node tail;
+    private Node head;
+    private Node tail;
 
 
-    protected class Node {
-        Object data;
-        Node next;
+    private class Node {
+        private Object data;
+        private Node next;
 
         protected Node(Object data) {
             this.data = data;
@@ -80,7 +80,7 @@ public class MyLinkedList<E> implements ImyList<E> {
 
     @Override
     public boolean remove(Object o) {
-                remove(find(o));
+        remove(find(o));
 
         return true;
     }
@@ -92,7 +92,6 @@ public class MyLinkedList<E> implements ImyList<E> {
         } else {
 
             if (i == 0) {
-                head.setNext(null);
                 head = findNode(1);
                 return true;
             } else if (i == size()) {
@@ -121,7 +120,7 @@ public class MyLinkedList<E> implements ImyList<E> {
     @Override
     public void set(int index, Object o) {
         Node newNode = new Node(0);
-        add(index,o);
+        add(index, o);
 
     }
 
@@ -152,13 +151,13 @@ public class MyLinkedList<E> implements ImyList<E> {
 
     @Override
     public int[] findAll(Object o) {
-        int [] arr = new int[0];
-        int counter =0;
+        int[] arr = new int[0];
+        int counter = 0;
         Node tempNode = head;
         while (counter < size()) {
-            if (tempNode.getData()== o) {
-                arr = Arrays.copyOf(arr,arr.length+1);
-                arr[arr.length-1] =counter;
+            if (tempNode.getData() == o) {
+                arr = Arrays.copyOf(arr, arr.length + 1);
+                arr[arr.length - 1] = counter;
 
             } else if (tail == tempNode) {
                 return arr;
@@ -186,23 +185,23 @@ public class MyLinkedList<E> implements ImyList<E> {
         }
 
         return 0;
-}
+    }
 
 
     @Override
     public boolean isEmpty() {
-        if (head !=null){
+        if (head != null) {
             return false;
-        }else {
+        } else {
             return true;
         }
     }
 
     @Override
     public boolean contains(Object o) {
-        if(find(0)>-1){
+        if (find(0) > -1) {
             return true;
-        }else {
+        } else {
             return false;
         }
 
@@ -211,11 +210,10 @@ public class MyLinkedList<E> implements ImyList<E> {
 
     @Override
     public void clear() {
-    head = null;   //pytanie  co się dzieje z pozostałymi obiektami? Są niszczone?
-    tail = null;
+        head = null;   //pytanie  co się dzieje z pozostałymi obiektami? Są niszczone?
+        tail = null;
 
     }
-
 
 
     @Override
@@ -223,15 +221,23 @@ public class MyLinkedList<E> implements ImyList<E> {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(getClass().getSimpleName()).append(": [");
         for (int i = 0; i < size(); i++) {
-            if (i ==0){
+            if (i == 0) {
                 stringBuilder.append(get(i));
-            }else {
+            } else {
                 stringBuilder.append(",").append(get(i));
             }
 
         }
         stringBuilder.append("]");
         return stringBuilder.toString();
+    }
+
+    public E getFirst() {
+        return (E) head.getData();
+    }
+
+    public E getLast() {
+        return (E) tail.getData();
     }
 
     private Node findNode(int index) {
@@ -252,6 +258,13 @@ public class MyLinkedList<E> implements ImyList<E> {
         }
     }
 
+    public Object[] toArray() {
+        Object[] arr = new Object[size()];
+        for (int i = 0; i < size(); i++) {
+            arr[i] = get(i);
 
+        }
+        return arr;
+    }
 }
 
