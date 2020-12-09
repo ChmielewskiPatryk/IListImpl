@@ -1,1 +1,1 @@
-# >Simple implementation of LinkedList in Java
+# Simple implementation of LinkedList in Java
